@@ -1,17 +1,25 @@
-run_analysis <- function() {
-  setwd("./RProject/GettingAndCleaningData/Week4")
-  library(data.table)
-  
-  if(!file.exists("./data")){
+  ##setwd("./RProject/GettingAndCleaningData/Week4")
+if (!require("data.table")) {
+  install.packages("data.table")
+}
+
+if (!require("reshape2")) {
+  install.packages("reshape2")
+}
+
+require("data.table")
+require("reshape2")  
+path_rf <- file.path("./data" , "UCI HAR Dataset")
+
+if(!file.exists("./data")){
   	dir.create("./data")
   
     fileUrl <- "https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip"
     download.file(fileUrl,destfile="./data/Dataset.zip",method="curl")
     unzip(zipfile="./data/Dataset.zip",exdir="./data")
-    path_rf <- file.path("./data" , "UCI HAR Dataset")
     files<-list.files(path_rf, recursive=TRUE)
     files
-  }
+}
   
   featureNames <- read.table(file.path(path_rf,"features.txt"),header=FALSE)
   activityLabels <- read.table(file.path(path_rf, "activity_labels.txt"), header = FALSE)
@@ -76,4 +84,3 @@ run_analysis <- function() {
   tidyData <- aggregate(. ~Subject + Activity, extractedData, mean)
   tidyData <- tidyData[order(tidyData$Subject,tidyData$Activity),]
   write.table(tidyData, file = "Tidy.txt", row.names = FALSE)
-}
